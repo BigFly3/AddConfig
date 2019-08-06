@@ -1,0 +1,60 @@
+.upload-file{
+    display:inline-block;
+    margin-right:5px;
+}
+
+.upload-select-file a{
+    margin-top:10px;
+}
+
+.contents-body .form-table .upload-select-file .select-image{
+    max-width:300px;
+}
+
+.upload-select-file .iteminfo{
+    margin-top:5px;
+}
+
+.upload-file-open{
+    padding:2px 5px;
+}
+
+.upload-file-delete{
+    margin-left:10px;
+    display:inline-block;
+    padding:2px 10px;
+    border:1px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.upload-select-file .iteminfo{
+    margin-top:10px;
+    font-size:1.5em;
+}
+
+.upload-select-file .iteminfo-path{
+    margin-right: 15px;
+}
+
+.table-title-before,
+.label-before,
+.input-before,
+.table-title-after,
+.table-after{
+    margin-bottom:5px;
+}
+.label-after,
+.table-title-after,
+.input-after{
+    margin-top:5px;
+}
+
+/* 旧テーマ用指定 */
+.addConfigItem.section{
+    margin-bottom:20px;
+}
+
+/* 新テーマ用指定 */
+.addConfigItem.bca-section{
+}
