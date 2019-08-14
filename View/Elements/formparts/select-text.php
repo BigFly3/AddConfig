@@ -6,14 +6,18 @@
  * @author			BigFly3
  * @package			AddConfig
  * @license			MIT
+ * 
+ * value値にクォート、カンマが含まれる場合は、別文字ACQUOTE、ACCOMMAに置換される。
+ * 登録データはヘルパーの$this->addConfig->explodeArray('キー名');を使用すると配列データを取得できる。
+ * $this->addConfig->in('キー名','チェック文字列'); で含まれるかどうかチェックできる。
  */
 ?>
 <?php if(!empty($name) && count($options['options']) > 0 ):?>
 
 <div id="SelectText<?php echo ucfirst($name); ?>_">
-<?php foreach($options['options'] as $key => $value):?>
+<?php foreach($options['options'] as $key => $value): $escKey = str_replace(',','ACCOMMA',$key);$escKey = str_replace('\'','ACQUOTE',$escKey); ?>
     <div class="bca-checkbox">
-    <input type="checkbox" name="<?php echo "{$name}{$key}"?>" value="<?php echo $key?>" id="<?php echo "SelectText".ucfirst($name).$key; ?>" class="bca-checkbox__input">&nbsp;<label for="SelectText<?php echo ucfirst($name); ?><?php echo $key?>" class="bca-checkbox-label"><?php echo $value?></label>
+    <input type="checkbox" name="<?php echo "{$name}{$escKey}"?>" value="<?php echo $escKey?>" id="<?php echo "SelectText".ucfirst($name).$escKey; ?>" class="bca-checkbox__input">&nbsp;<label for="SelectText<?php echo ucfirst($name); ?><?php echo $escKey?>" class="bca-checkbox-label"><?php echo $value?></label>
     </div>
 <?php endforeach;?>
 </div>

@@ -6,6 +6,10 @@
  * @author			BigFly3
  * @package			AddConfig
  * @license			MIT
+ * 
+ * BcForm->prefTagのラッパー
+ * デフォルトは ID ⇒ 県名
+ * $options['convertKey'] = trueをセットすると 県名⇒県名 
  */
 ?>
 <?php if(!empty($name)):?>

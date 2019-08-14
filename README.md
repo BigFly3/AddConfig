@@ -13,6 +13,9 @@ JSを含めた高機能なフォームパーツを独自で作成することも
 2. テーマ管理からプラグインの入ったテーマを選択する。
 3. プラグイン管理からAddConfigプラグインを選択してインストールする。
 
+
+
+
 ## 設定ファイルで作成できるパーツ
 * BcFormヘルパーのinputのtypeで設定できる入力パーツ  
 * baserCMSアップローダーへのファイルアップロード
@@ -21,7 +24,17 @@ JSを含めた高機能なフォームパーツを独自で作成することも
 
 ## カスタムフィールド作成方法
 **AddConfig/Config/settings.php**に、
-$config['AddConfig']から始まるカスタムフィールドを記述します。  
+$config['AddConfig']から始まる設定を記述していきます。  
+
+実際記述する際は**settings.php**内の以下の部分のコメントアウト(// )してから進めていきます。
+```
+// include "sample-form.php"; //$config['AddConfigDebug'] = true;がセットされているので登録はしません。
+```
+
+このincludeされているファイルはプラグインのインストール直後に表示されているフォーム項目です。
+記述の際は [**sample-form.php**](https://github.com/BigFly3/AddConfig/blob/master/Config/sample-form.php)の設定内容を参考にしてください。
+
+
 
 ```
 $config['AddConfig']['form'][] = [ 
@@ -69,24 +82,65 @@ $config['AddConfig']['form'][] = [
     /admin/add_config/add_configs/form/  
 
 
-色々なフォームパーツの記述方法は [こちら](https://github.com/BigFly3/AddConfig/blob/original-conf/Config/sample-form.php) を参考にしてください。  
-
-**settings.php**内の以下の部分のコメントアウト(// )を消すと作成出来るフォームを確認できます。
-```
-// include "sample-form.php"; //$config['AddConfigDebug'] = true;がセットされているので登録はしません。
-```
 
 
 
 ※登録するデータは**key=>value**の形でする必要があります。  
 配列で登録しようとすると、エラーでロールバックされます。  
-複数のチェックボックス選択を使いたい場合は、formpartsにあるselect-textをお使いください。
+複数選択のチェックボックスを使いたい場合は、formpartsにあるselect-textをお使いください。
 
 
 ## 登録されたデータ
 登録されたデータはグローバル変数の$siteConfigと同じようにサイトの各場所から参照できるようになります。  
+```
 controller　→　$this->addConfigs  
 view　→　$addConfig  
+```
+
+### ヘルパー
+viewにセットされた$addConfigをそのまま出力してもよいのですが、
+$addConfigの内容を使いやすくするためのヘルパー【 $this->AddConfig->関数名() 】もあります。
+
+
+- field($key [ , $escape = true ])　キー名のデータを出力
+- brfield($key [ , $escape = true ])　キー名のデータにある改行を&lt;br&gt;にして出力する
+```
+どちらもデフォルトはタグをエスケープします。値が文字列でない場合は無視されます。
+f(),brf() の省略形もあります
+```
+- img($key [ , $options ])　uploadで登録した画像を表示します。
+```
+オプションの指定はBcBaser->imgの指定と同じ + 'noimage'=>画像パスで登録なし時の画像を表示できます。
+'noimage'=>true にするとbaserCMS標準のnoimageが表示されます。
+```
+
+- get($key)　キー名のデータを取得
+- set($key , $value )　キー名に任意の値をセット
+- getData()　setData()に登録している内部データを取得
+- setData([$array=$addConfig])　出力のベースになる配列をセット。初期値は$addConfig
+
+```
+setData()は他の配列データをセットするとaddConfigヘルパーのメソッドが使用できます。
+$siteConfigやループの中でaddConfigヘルパーを使用するイメージです。
+$addConfigのデータで初期化したいときは、引数無しのsetData()を呼びます。
+```
+
+- is($key)　キー名の値がそんざいするかどうか
+- in($key , $needle )　select-text（複数選択で登録）したものに$needleがマッチするかどうか
+- explodeArray($key)　select-textで登録した値を配列にして返す。
+```
+select-textで登録した値は、シングルクォートやカンマが値に含まれていると文字列に置換されています。
+普通の値でもexplodeだけだとシングルクォートが残ってしまうのでexplodeArray()を使ってください。
+```
+
+- getKeysFilter($keys)　[key1,key2,key3,...] 指定したキーの配列のみを返す。
+- getPrefixFilter($prefix[,$drop_prefix = false])　$prefixにマッチするキー名の配列を返す。
+```
+$drop_prefix = trueにするとsmtp_host,smtp_portなどが、取得した配列の中ではhost,portになります。
+```
+
+
+
 
 
 ## FAQ

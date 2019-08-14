@@ -16,6 +16,7 @@ class AddConfigControllerEventListener extends BcControllerEventListener {
 
     public function startup(CakeEvent $event) {
         $Ctrl = $event->subject();
+        $Ctrl->helpers[] = 'AddConfig.AddConfig';
 
         //タイトル名をconfigから設定できるようにしたいのでここで追加する。
         $contents = Configure::read('BcApp.adminNavigation.Contents');
