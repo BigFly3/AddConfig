@@ -203,7 +203,7 @@ class AddConfigHelper extends AppHelper {
      */
     public function img($key,$options = []){
         $options = array_merge(['alt' => ''],$options);
-        $url = $this->get($key);
+        $url = '/' . $this->get($key);
         if($url !== ""){ //登録された画像を出す場合
             echo $this->BcBaser->img($url,$options);
         }else if(isset($options['noimage'])){ //画像登録が任意でnoimageがセットされている場合
