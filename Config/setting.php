@@ -14,6 +14,11 @@
 $config['AddConfig']['name'] = ''; //デフォルトは【オリジナル設定】 インストール時はsample-form.phpの中で【サンプル入力フォーム】と設定されています。
 
 /**
+ * admin-thirdテーマの初期表示を強制的に全部開くかどうか
+ */
+$config['AddConfig']['accordAllOpen'] = true; //falseだとエラーがあった部分のみ開きます。
+
+/**
  * フォーム用セッティング
  */
 $config['AddConfig']['debug'] = false; //trueにしておくとフォーム項目のテスト中にデータ更新が出来ないようにすることができます。バリデーションチェックは可能です。
@@ -43,7 +48,7 @@ $config['AddConfig']['form'][] = [
             'validate' => [  //バリデーションルール　必要な場合のみ追加
             ],
             'help' => '' //ヘルプテキスト
-        ],        
+        ],
     ]
 ];
 */

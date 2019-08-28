@@ -196,6 +196,36 @@ class AddConfigHelper extends AppHelper {
     }
 
     /**
+     * 区切り文字でグループ化した配列を作成
+     * @params string $data
+     * @params string $delimiter 
+     * @return array
+     * @access public
+     */
+    public function splitGroupArray($data = [],$delimiter = '_'){
+        $result = [];
+        $splitKey = function($key,$value,$delimiter) use (&$splitKey){
+            $array = [];
+            $key = trim($key,$delimiter);
+            if(strpos($key,$delimiter) > 0 ){
+                $newkey = substr($key, 0, strpos($key,$delimiter));
+                $rest = substr($key, strlen( $newkey) + 1);
+                $array[$newkey] = $splitKey($rest,$value,$delimiter);
+            }else{
+                $array[$key] = $value;
+            }
+            return $array;
+        };
+        if(!empty($data)){
+            foreach($data as $key => $value){
+                $newArray = $splitKey($key,$value,$delimiter);
+                $result = array_merge_recursive($result,$newArray);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * upload用画像出力メソッド
      * @params string $key 出力するキー
      * @params array $options baser->imgのオプション + noimage => オリジナル画像のパス or true(baserCMSのnoimage) 

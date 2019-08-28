@@ -62,6 +62,9 @@ public $contentName = 'オリジナル設定';
  * beforeFilter
  */
 	public function beforeFilter() {
+		//usesでセットするとconstructが動作せず独自バリデーションが動作しないっぽい
+		$this->AddConfig = ClassRegistry::init('AddConfig.AddConfig');
+
 		$this->BcAuth->allow('jquery_base_url');
 		parent::beforeFilter();
 		$this->crumbs = [['name' => $this->contentName, 'url' => ['plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'form']]];
@@ -81,6 +84,7 @@ public $contentName = 'オリジナル設定';
 		$isDebug = Configure::read('AddConfig.debug');
 		if($isDebug) 
 			$this->set('addConfigDebug', 1 );	//登録不可、デバッグ可
+		$accordAllOpen = Configure::read('AddConfig.accordAllOpen'); //アコーディオンをデフォルトで全て開くかどうか
 
 		$formConfigs = Configure::read('AddConfig.form');
 		if(!empty($formConfigs)){
@@ -100,7 +104,6 @@ public $contentName = 'オリジナル設定';
 					}
 				}
 			}
-			$this->set('formConfigs', $formConfigs );
 			if (empty($this->request->data)) {
 				$this->request->data['AddConfig'] = $this->AddConfig->findExpanded();
 			} else {
@@ -131,7 +134,9 @@ public $contentName = 'オリジナル設定';
 
 			$baseUrl = str_replace('/index.php', '', BC_BASE_URL);
 			$this->set(compact(
-				'baseUrl'
+				'baseUrl',
+				'formConfigs',
+				'accordAllOpen'
 			));
 			$this->pageTitle = $this->contentName;
 		}
@@ -154,6 +159,52 @@ public $contentName = 'オリジナル設定';
 			'AddConfigData'
 		));
 		$this->pageTitle = $this->contentName . '｜登録一覧';
+	}
+
+/**
+ * [ADMIN] 編集フォーム
+ * 
+ * @param int $configId 登録ID
+ */
+	public function admin_edit($configId) {
+		if(!BcUtil::isAdminUser()){
+			$this->setMessage('権限がありません。', true);
+			$this->redirect(array('action' => 'index'));
+		}
+
+		$this->pageTitle = $this->contentName . '｜編集';
+
+		if (!$configId) {
+			$this->setMessage('無効な処理です。', true);
+			$this->redirect(array('action' => 'index'));
+		}
+		$this->crumbs[] = array('name' => $this->contentName , 'url' => array('plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'index'));
+
+		if (empty($this->request->data)) {
+			$data = $this->AddConfig->findById($configId);
+			if ($data) {
+				$this->request->data = $data;
+			}
+		} else {
+			//idに紐づくnameが変更されている場合、ユニークかどうかチェックする
+			$this->AddConfig->validate['name'] = [
+				[
+					'rule' => ['isUniqueKey',$configId],
+					'message' => 'このフィールド名は既に使用されています。'
+				],
+			];
+			$this->AddConfig->set($this->request->data);
+
+			if ($this->AddConfig->save()) {
+				$message = '「' . $this->request->data['AddConfig']['name'] . '」を更新しました。';
+				$this->setMessage($message, false, true);
+				$this->redirect(['controller' => 'add_configs', 'action' => 'index']);
+			} else {
+				$this->setMessage('入力エラーです。内容を修正して下さい。', true);
+			}
+		}
+
+		$this->set(compact('configId'));
 	}
 
 /**
@@ -180,7 +231,7 @@ public $contentName = 'オリジナル設定';
 	public function admin_ajax_delete($id = null) {
 		$this->_checkSubmitToken();
 		if (!$id) {
-			$this->ajaxError(500, __d('baser', '無効な処理です。'));
+			$this->ajaxError(500, __d('baser', '指定されたページへのアクセスは許可されていません。'));
 		}
 		if ($this->_del($id)) {
 			exit(true);

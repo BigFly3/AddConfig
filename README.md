@@ -99,7 +99,7 @@ view　→　$addConfig
 
 ### ヘルパー
 viewにセットされた$addConfigをそのまま出力してもよいのですが、
-$addConfigの内容を使いやすくするためのヘルパー【 $this->AddConfig->関数名() 】もあります。
+$addConfigの内容を使いやすくするためのヘルパー【 $this->AddConfig->メソッド名() 】もあります。
 
 
 - field($key [ , $escape = true ])　キー名のデータを出力
@@ -137,6 +137,51 @@ select-textで登録した値は、シングルクォートやカンマが値に
 - getPrefixFilter($prefix[,$drop_prefix = false])　$prefixにマッチするキー名の配列を返す。
 ```
 $drop_prefix = trueにするとsmtp_host,smtp_portなどが、取得した配列の中ではhost,portになります。
+```
+
+- splitGroupArray($array,$delimiter='_')　getPrefixFilterなどで取得した配列のキー名を$delimiterで分割して新たな配列グループを作成します。
+
+```
+$array['feature_01_title'] = "特徴１";
+$array['feature_02_img'] = "files/uploads/feature02.png";
+
+$groupArray = $this->AddConfig->splitGroupArray($array);
+
+echo $groupArray['feature']['01']['title'];
+echo $groupArray['feature']['02']['img'];
+
+のようにアクセスできます
+```
+
+
+上記ヘルパーを組み合わせると、以下のようなキー名で登録されたデータをforeachで出力出来るようになります。
+
+
+```
+$addConfig['feature_01_title'] = "特徴１";
+$addConfig['feature_01_text'] = "説明１テキスト";
+$addConfig['feature_01_img'] = "files/uploads/feature01.png";
+$addConfig['feature_02_title'] = "特徴２";
+$addConfig['feature_02_text'] = "説明２テキスト";
+$addConfig['feature_02_img'] = "files/uploads/feature02.png";
+$addConfig['feature_03_title'] = "特徴３";
+$addConfig['feature_03_text'] = "説明３テキスト";
+$addConfig['feature_03_img'] = "files/uploads/feature03.png";
+
+
+$filterArray = $this->AddConfig->getPrefixFilter('feature_',true); //prefix部分を削除
+$feature = $this->AddConfig->splitGroupArray($filterArray);
+if(!empty($feature)){
+    foreach($feature as $key => $value){
+        $this->AddConfig->setData($value); //ループでヘルパーを使用するために単グループをセット
+        $this->AddConfig->field("title");
+        $this->AddConfig->brfield("text");
+        $this->AddConfig->img("img");
+    }
+    $this->AddConfig->setData(); //ヘルパー内部のデータを$addConfigに戻す
+}
+
+$this->AddConfig->field("feature_01_title"); //$addConfigのキーでアクセスできる
 ```
 
 

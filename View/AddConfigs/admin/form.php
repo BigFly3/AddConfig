@@ -43,12 +43,11 @@
 <?php if($isNewThemeAdmin): //新テーマのフォームテンプレート?>
 <script>
   $(function(){
-    //エラーが存在しているのアコーディオンを開く
     $('.addConfigItem.bca-section').each(function(){
-      if($(this).find('.error-message').length > 0){
+<?php if(!$accordAllOpen):?>if($(this).find('.error-message').length > 0){<?php endif;?>
         $(this).find('.bca-collapse__btn').attr('data-bca-state','open');
         $(this).find('.bca-collapse').show().attr('data-bca-state','open');
-      }
+<?php if(!$accordAllOpen):?>}<?php endif;?>
     })
   })
 </script>

@@ -144,7 +144,7 @@ $config['AddConfig']['form'][] = [ //['form'][0],['form'][1]のようにすれ�
 
 $config['AddConfig']['form'][] = [ 
     'title' => '拡張系のフォームパーツ',
-    'tableAfter' => 'ここに表示しているフォームパーツは/AddConfig/Config.sample-form.phpの設定で作成されたものです。' ,
+    'tableAfter' => 'ここに表示しているフォームパーツは/AddConfig/Config/sample-form.phpの設定で作成されたものです。' ,
     'fields' => [
         'upload01' => [
             'label' => 'アップロード',

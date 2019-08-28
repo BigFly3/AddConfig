@@ -23,6 +23,15 @@ class AddConfig extends AppModel {
 	public $actsAs = ['BcCache'];
 
 /**
+ * プラグイン名
+ *
+ * @var		string
+ * @access 	public
+ */
+public $plugin = 'AppConfig';
+
+
+/**
  * AddConfig constructor.
  *
  * @param bool $id
@@ -50,4 +59,28 @@ class AddConfig extends AppModel {
 			return false;
 		}
 	}
+
+
+/**
+ * 登録するキーが別IDのキーに存在しないかどうか
+ * 
+ * @param string $field フィールド名
+ * @param string $value 値
+ * @return bool
+ */
+	public function isUniqueKey($check,$id) {
+		$ret = $this->find('count',['conditions' => 
+			[
+				'NOT' => [
+					'id' => $id,
+					'name' => key($check)
+				],
+				'AND' => [
+					'name' => $check
+				]
+			]
+		]);
+		return $ret > 0 ? false : true;
+	}
+
 }
