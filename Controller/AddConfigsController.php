@@ -122,7 +122,7 @@ public $contentName = 'オリジナル設定';
 						// DBに保存
 						if ($this->AddConfig->saveKeyValue($this->request->data)) {
 							$dataSource->commit();
-							$this->setMessage(__d('baser', 'システム設定を保存しました。'));
+							$this->setMessage(__d('baser', $this->contentName . 'を保存しました。'));
 							$this->redirect(['action' => 'form']);
 						}
 					} catch (Exception $ex) {
