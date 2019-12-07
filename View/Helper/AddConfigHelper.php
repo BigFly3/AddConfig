@@ -246,4 +246,24 @@ class AddConfigHelper extends AppHelper {
             echo $this->BcBaser->img($url ,$options);
         }
     }
+
+    /**
+     * マークダウン変換用メソッド
+     * @params string $key マークダウンのキー
+     * @access public
+     */
+    public function md($key) {
+        $input = $this->get($key);
+        // オートロードでクラスが存在する場合
+        if (class_exists('Michelf\MarkdownExtra')) {
+            $Markdown = new Michelf\MarkdownExtra;
+            return $Markdown->defaultTransform($input);
+        }
+        // 読み込めない場合
+        App::import('Vendor', 'AddConfig.markdown/markdown');
+        if (!function_exists('Markdown')) {
+            throw new CakeException('The Markdown vendor file was not loaded.');
+        }
+        return Markdown($input);
+    }
 }

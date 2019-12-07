@@ -44,7 +44,7 @@ class AddConfigsController extends AppController {
  *
  * @var array
  */
-	public $subMenuElements = [];
+	public $subMenuElements = ['add_config'];
 
 /**
  * ヘルパー
@@ -56,7 +56,7 @@ class AddConfigsController extends AppController {
  * コンテンツタイトル
  * @var array
  */
-public $contentName = 'オリジナル設定';
+	public $contentName = 'オリジナル設定';
 
 /**
  * beforeFilter
@@ -67,7 +67,9 @@ public $contentName = 'オリジナル設定';
 
 		$this->BcAuth->allow('jquery_base_url');
 		parent::beforeFilter();
-		$this->crumbs = [['name' => $this->contentName, 'url' => ['plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'form']]];
+		$this->crumbs = [
+			['name' => $this->contentName, 'url' => ['plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'form']]
+		];
 
 		//新管理画面テーマの対応
 		$isNewThemeAdmin = isset($this->siteConfigs['admin_theme']) && $this->siteConfigs['admin_theme'] === 'admin-third';
@@ -77,16 +79,19 @@ public $contentName = 'オリジナル設定';
 /**
  * [ADMIN] 設定フォーム
  */
-	public function admin_form() {
-		$contentName = Configure::read('AddConfig.name');
-		if($contentName)
-			$this->contentName = $contentName;	//名称変更
+	public function admin_form($formId=null) {
+		//H1の名称変更がある場合
+		if(Configure::check("AddConfig.{$formId}.name")){
+			$this->contentName = Configure::read("AddConfig.{$formId}.name");
+		}else if(Configure::check('AddConfig.name') && Configure::read('AddConfig.name') !== ''){
+			$this->contentName = Configure::read('AddConfig.name');
+		}
 		$isDebug = Configure::read('AddConfig.debug');
 		if($isDebug) 
 			$this->set('addConfigDebug', 1 );	//登録不可、デバッグ可
 		$accordAllOpen = Configure::read('AddConfig.accordAllOpen'); //アコーディオンをデフォルトで全て開くかどうか
 
-		$formConfigs = Configure::read('AddConfig.form');
+		$formConfigs = $formId === null ? Configure::read('AddConfig.form') : Configure::read("AddConfig.{$formId}.form");
 		if(!empty($formConfigs)){
 			foreach($formConfigs as $index => $formConfig){
 				if(!empty($formConfig['fields'])){
@@ -122,8 +127,12 @@ public $contentName = 'オリジナル設定';
 						// DBに保存
 						if ($this->AddConfig->saveKeyValue($this->request->data)) {
 							$dataSource->commit();
-							$this->setMessage(__d('baser', $this->contentName . 'を保存しました。'));
-							$this->redirect(['action' => 'form']);
+							//本番モードでも即反映できるようにする
+							$this->AddConfig->Behaviors->load('BcCache');
+							$this->AddConfig->delCache();
+							clearViewCache();
+							$this->setMessage($this->contentName . 'を保存しました。');
+							$this->redirect(['action' => 'form', $formId]);
 						}
 					} catch (Exception $ex) {
 						$dataSource->rollback();
@@ -140,6 +149,7 @@ public $contentName = 'オリジナル設定';
 			));
 			$this->pageTitle = $this->contentName;
 		}
+		$this->set('formId',$formId);
 	}
 
 	
@@ -169,16 +179,19 @@ public $contentName = 'オリジナル設定';
 	public function admin_edit($configId) {
 		if(!BcUtil::isAdminUser()){
 			$this->setMessage('権限がありません。', true);
-			$this->redirect(array('action' => 'index'));
+			$this->redirect(['action' => 'index']);
 		}
 
 		$this->pageTitle = $this->contentName . '｜編集';
 
 		if (!$configId) {
 			$this->setMessage('無効な処理です。', true);
-			$this->redirect(array('action' => 'index'));
+			$this->redirect(['action' => 'index']);
 		}
-		$this->crumbs[] = array('name' => $this->contentName , 'url' => array('plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'index'));
+		$this->crumbs = [
+			['name' => $this->contentName, 'url' => ['plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'form']],
+			['name' => '登録一覧' , 'url' => ['plugin' => 'add_config', 'controller' => 'add_configs', 'action' => 'index']]
+		];
 
 		if (empty($this->request->data)) {
 			$data = $this->AddConfig->findById($configId);

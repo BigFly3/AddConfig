@@ -12,7 +12,7 @@ $config['AddConfig']['name'] = 'サンプル入力フォーム'; //ナビやタ�
 $config['AddConfig']['debug'] = true; //無駄なデータが誤って登録されないようにデバッグモードにしています。
 
 $config['AddConfig']['form'][] = [ //['form'][0],['form'][1]のようにすれば表示順番を設定することもできます。
-    'titleBefore' => 'titleBeforeは見出しの前に挿入され、admin-thirdだとアコーディオンに含まれない形で表示されます。',
+    'titleBefore' => 'titleBeforeは見出しの前に挿入され、アコーディオンに含まれない形で表示されます。',
     'title' => '使用できるformヘルパー(input)のパーツサンプル',
     'titleAfter' => '$addConfigに登録出来るものは、単一の値のみなので、配列データになってしまうマルチチェックボックスなどは使えません。<br>複数選択を使いたい場合はformpartsにあるselect-txtなどを使ってください。' ,
     'tableAfter' => 'テーブルの後に表示できる領域です。' ,
@@ -157,8 +157,8 @@ $config['AddConfig']['form'][] = [
         ],
         'multicheck01' => [
             'label' => 'マルチ選択',
-            'inputBefore' => '配列系のデータを登録したいときに使います',
-            'inputAfter' => '\'1\',\'2\',\'3\'のような登録形式になります。',
+            'inputBefore' => '配列系のデータを登録したいときに使います<br>\'1\',\'2\',\'3\'のような登録形式になります。',
+            'inputAfter' => 'ヘルパーの$this->AddConfig->explodeArray("キー名")で配列に変換して使用してください。',
             'parts' => [
                 'type' => 'element', 
                 'file' => 'select-text',
@@ -175,6 +175,25 @@ $config['AddConfig']['form'][] = [
                 'type' => 'element',
                 'file' => 'pref',
                 'convertKey' => true
+            ],
+        ],
+        'colorpicker01' => [
+            'label' => 'カラーピッカー',
+            'inputBefore' => 'テーマ設定にあるカラーピッカーを移植したものです',
+            'inputAfter' => '',
+            'parts' => [
+                'type' => 'element',
+                'file' => 'colorpicker',
+                'size' => 8,
+            ],
+        ],
+        'markdown01' => [
+            'label' => 'マークダウンエディタ',
+            'inputBefore' => '',
+            'inputAfter' => 'ヘルパーは$this->AddConfig->md("キー名")を使用してください。',
+            'parts' => [
+                'type' => 'element',
+                'file' => 'markdown',
             ],
         ],
     ],

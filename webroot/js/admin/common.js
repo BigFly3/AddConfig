@@ -129,5 +129,23 @@ $(function(){
       }
     }
   }
+
+  $(".color-picker").each(function() {
+    var color;
+    if($(this).val()) {
+      $(this).css('border-right','36px solid #'+$(this).val());
+      color = $(this).val();
+    } else {
+      color = 'ffffff';
+    }
+    $(this).colpick({
+      layout:'hex',
+      color:color,
+      onSubmit:function(hsb,hex,rgb,el) {
+        $(el).val(hex).css('border-right','36px solid #'+hex);
+        $(el).colpickHide();
+      }
+    });
+  });    
 });
 

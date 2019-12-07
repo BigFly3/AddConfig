@@ -15,7 +15,7 @@
 ?>
 <?php if(!empty($formConfigs)):?>
 
-<?php echo $this->BcForm->create('AddConfig', ['url' => ['action' => 'form']]) ?>
+<?php echo $this->BcForm->create('AddConfig', ['url' => ['action' => 'form',$formId]]) ?>
 <?php echo $this->BcFormTable->dispatchBefore() ?>
 <?php echo $this->BcForm->hidden('AddConfig.id') ?>
 
@@ -40,18 +40,26 @@
   <script>$(function(){$("a[rel=AddConfig]").colorbox();});</script>
   <div id="modalView"><div id="modalViewResult"></div></div>
 
-<?php if($isNewThemeAdmin): //新テーマのフォームテンプレート?>
 <script>
   $(function(){
-    $('.addConfigItem.bca-section').each(function(){
+    $('.addConfigItem').each(function(){
 <?php if(!$accordAllOpen):?>if($(this).find('.error-message').length > 0){<?php endif;?>
         $(this).find('.bca-collapse__btn').attr('data-bca-state','open');
         $(this).find('.bca-collapse').show().attr('data-bca-state','open');
 <?php if(!$accordAllOpen):?>}<?php endif;?>
     })
+    <?php if(!$isNewThemeAdmin): // 旧管理画面にもアコーディオンを追加する?>
+      $('.addConfigItem .bca-collapse__btn').on('click',function(){
+        if($(this).attr('data-bca-state') === 'open'){
+          $(this).attr('data-bca-state','')
+        }else{
+          $(this).attr('data-bca-state','open')
+        }
+        $(this).closest('.addConfigItem').find('.bca-collapse').slideToggle();
+      });
+    <?php endif?>
   })
 </script>
-<?php endif ?>
 
 <?php echo $this->BcFormTable->dispatchAfter() ?>
 
@@ -61,6 +69,8 @@
 
 <?php echo $this->BcForm->end() ?>
 
+<?php elseif($formId !== null): ?>
+  <p>フォーム項目が作成されていません。<br>AddConfig/Config/settings.phpに$config['AddConfig']['<?php echo $formId;?>']['form']の設定をしてください。</p>
 <?php else: ?>
-	<p>フォーム項目が作成されていません。<br>AddConfig/Config/settings.phpにformを設定してください。</p>
+	<p>フォーム項目が作成されていません。<br>AddConfig/Config/settings.phpに$config['AddConfig']['form']の設定をしてください。</p>
 <?php endif ?>

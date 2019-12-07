@@ -35,14 +35,19 @@ class AddConfigControllerEventListener extends BcControllerEventListener {
         }
         Configure::write('BcApp.adminNavigation.Contents',$contents);
 
-        if($Ctrl->name !== 'AddConfig'){
+        if($Ctrl->name !== 'AddConfigs'){ //AddConfigの管理画面以外ではキャッシュをロードする
             try {
-                $AddConfig = ClassRegistry::init('AddConfig');
-                $addConfigs = $AddConfig->findExpanded();
+                if (ClassRegistry::isKeySet('AddConfig')) {
+                    $this->AddConfigModel = ClassRegistry::getObject('AddConfig');
+                } else {
+                    $this->AddConfigModel = ClassRegistry::init('AddConfig');
+                }
+                $this->AddConfigModel->Behaviors->load('BcCache');
+                $addConfigs = $this->AddConfigModel->findExpanded();
                 $Ctrl->addConfigs = $addConfigs;
             } catch (Exception $ex) {
-				$Ctrl->addConfigs = [];
-			}                
+                $Ctrl->addConfigs = [];
+            }
         }
     }
     public function beforeRender(CakeEvent $event) {

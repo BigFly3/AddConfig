@@ -37,6 +37,15 @@
     margin-right: 15px;
 }
 
+.colpick{
+    z-index:10;
+}
+
+.editor-toolbar.fullscreen,
+.CodeMirror-fullscreen{
+    z-index:200
+}
+
 .table-title-before,
 .label-before,
 .input-before,
@@ -45,16 +54,52 @@
     margin-bottom:5px;
 }
 .label-after,
-.table-title-after,
 .input-after{
     margin-top:5px;
 }
 
 /* 旧テーマ用指定 */
-.addConfigItem.section{
-    margin-bottom:20px;
+.addConfigItem.section .table-title-before{
+    margin-bottom:15px;
+}
+.contents-body.section .addConfigItem .form-table{
+    margin-bottom:15px;
+}
+.addConfigItem.section:nth-of-type(n + 1){
+    margin-top:30px;
+}
+.addConfigItem.section .table-title .button-small{
+    position: relative;
+    width: 1.3em;
+    height: 1.2em;
+    margin-left: 0.5em;
+    padding: 0.1em;
+}
+.addConfigItem.section .table-title .button-small:before{
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    transition: all 0.2s ease-in-out;
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-top: solid 2px #999;
+    border-right: solid 2px #999;
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+}
+.addConfigItem.section .bca-collapse{
+    display:none;
+}
+.addConfigItem.section .table-title .button-small[data-bca-state="open"]:before{
+    left: 5px;
+    top: 7px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
 }
 
 /* 新テーマ用指定 */
-.addConfigItem.bca-section{
+.addConfigItem.bca-section .table-title-after{
+    margin-top:5px;
 }
