@@ -50,7 +50,7 @@ $(function(){
   $('#modalView').on("click","#DivPanelList .page-numbers a",function(e){
     e.preventDefault();
     var url = $(e.target).attr("href");
-    $.bcUtil.ajax(url, open_upload_modal);
+    $.bcUtil.ajax(url, open_upload_modal, { type: 'GET'});
   });
   //ファイルをアップロード
   $('#modalView').on("change",'#UploaderFileFile',uploaderFileFileChangeHandler);
